@@ -13,11 +13,17 @@ exports.getPopularMovies = async (page = 1) => {
 
 // Search movies
 exports.searchMovies = async (query, page = 1) => {
-  const response = await axios.get(`${BASE_URL}/search/movie`, {
-    params: { api_key: API_KEY, query, page }
-  });
-  return response.data;
+  try {
+    const response = await axios.get(`${BASE_URL}/search/movie`, {
+      params: { api_key: API_KEY, query, page }
+    });
+    return response.data;
+  } catch (error) {
+    console.error('TMDB Search Error:', error);
+    throw new Error('Failed to fetch movies');
+  }
 };
+
 
 // Get movie details
 exports.getMovieDetails = async (movieId) => {
