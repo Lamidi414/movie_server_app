@@ -3,20 +3,42 @@ const router = express.Router();
 const axios = require('axios');
 require('dotenv').config();
 
-// Get your API key from TMDB and add to .env
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
 
-// Real API implementation
+// Get popular movies
 router.get('/popular', async (req, res) => {
   try {
-    const { page = 1 } = req.query;
+    const page = req.query.page || 1;
     const response = await axios.get(
       `https://api.themoviedb.org/3/movie/popular?api_key=${TMDB_API_KEY}&page=${page}`
     );
     res.json(response.data);
   } catch (err) {
-    console.error('TMDB API Error:', err);
-    res.status(500).json({ error: 'Failed to fetch movies' });
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Get movie details
+router.get('/:id', async (req, res) => {
+  try {
+    const response = await axios.get(
+      `https://api.themoviedb.org/3/movie/${req.params.id}?api_key=${TMDB_API_KEY}`
+    );
+    res.json(response.data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Get genres
+router.get('/genres', async (req, res) => {
+  try {
+    const response = await axios.get(
+      `https://api.themoviedb.org/3/genre/movie/list?api_key=${TMDB_API_KEY}`
+    );
+    res.json(response.data);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
